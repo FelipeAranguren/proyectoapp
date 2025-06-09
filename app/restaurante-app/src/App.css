@@ -1,0 +1,367 @@
+/* Contenedor principal */
+.restaurantes-container {
+  padding: 10px;
+  max-width: 1500px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  color:white;
+}
+
+/* Grid de 3 columnas */
+.restaurantes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+/* Tarjeta de restaurante (ajustada para grid) */
+.restaurante-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 85%;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  color: black;
+}
+
+/* Asegura que el botón quede al final */
+.ver-menu-btn {
+  display: block;
+  text-align: center; /* Centra el texto horizontalmente */
+  padding: 12px 0; /* Aumenta el padding vertical para mejor aspecto */
+  background-color: #FF6F00; /* Naranja similar al de PedidosYa */
+  color: white; /* Texto blanco */
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+  margin-top: 12px;
+  border: none; /* Elimina bordes si es un botón */
+  cursor: pointer; /* Cambia el cursor al pasar por encima */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  font-size: 16px; /* Tamaño de fuente adecuado */
+  
+  /* Centrado vertical adicional (si usas flexbox) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Efecto hover para mejor interactividad */
+.ver-menu-btn:hover {
+  background-color: #E65100; /* Naranja más oscuro al pasar el mouse */
+  transform: translateY(-1px); /* Efecto sutil de elevación */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Sombra ligera */
+}
+
+/* Transición suave para efectos hover */
+.ver-menu-btn {
+  transition: all 0.3s ease;
+}
+
+/* Resto de estilos se mantienen igual que en la versión anterior */
+
+.restaurant-card {
+  position: relative;
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 300px; /* o el ancho que estés usando */
+  margin: 16px;
+}
+
+.restaurant-logo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 8px;
+  width: 64px;
+  height: calc(100% - 52px); /* o usá height: 80px para probar */
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.restaurant-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menu-button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: orange;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.menu-page {
+  padding: 32px;
+  background-color: rgba(255, 255, 255, 0.85); /* Fondo semitransparente claro */
+  border-radius: 12px;
+  max-width: 800px;
+  margin: 40px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.menu-page h2 {
+  font-size: 28px;
+  margin-bottom: 24px;
+  text-align: center;
+  color: #333;
+}
+
+.menu-item {
+  background-color: white;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.menu-item h3 {
+  margin: 0 0 8px;
+  color: #222;
+}
+
+.menu-item p {
+  margin: 4px 0;
+  color: #555;
+  font-size: 15px;
+}
+.add-button {
+  margin-top: 10px;
+  padding: 10px 16px;
+  background-color: orange;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.add-button:hover {
+  background-color: #E65100;
+}
+.carrito {
+  margin-top: 40px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.carrito h3 {
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.carrito ul {
+  list-style: none;
+  padding: 0;
+}
+
+.carrito li {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+.checkout-page {
+  background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco semitransparente */
+  padding: 32px;
+  max-width: 700px;
+  margin: 40px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.checkout-page h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #222;
+}
+
+.checkout-page ul {
+  list-style: none;
+  padding: 0;
+}
+
+.checkout-page li {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #333;
+}
+
+.checkout-page p {
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 20px;
+  text-align: right;
+  color: #111;
+}
+.checkout-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.checkout-buttons .vaciar,
+.checkout-buttons .confirmar {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.checkout-buttons .vaciar {
+  background-color: #dc3545;
+  color: white;
+}
+
+.checkout-buttons .vaciar:hover {
+  background-color: #c82333;
+}
+
+.checkout-buttons .confirmar {
+  background-color: #28a745;
+  color: white;
+}
+
+.checkout-buttons .confirmar:hover {
+  background-color: #218838;
+}
+/* En tu archivo CSS */
+/* Estilo del botón "Mi pedido" (animado y con degradado) */
+.boton-carrito {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #FF6F00, #FF8F00); /* Degradado naranja */
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px; /* Espacio superior */
+}
+
+/* Efectos al pasar el mouse */
+.boton-carrito:hover {
+  transform: scale(1.05); /* Ligero agrandamiento */
+  background: linear-gradient(135deg, #FF8F00, #FF6F00); /* Invierte el degradado */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Flecha que aparece al hover */
+.boton-carrito:hover::after {
+  content: "→";
+  margin-left: 8px;
+  transition: all 0.3s;
+}
+
+/* Versión móvil */
+@media (max-width: 768px) {
+  .boton-carrito {
+    width: 100%;
+    padding: 12px;
+  }
+}
+.boton-eliminar {
+  background-color: #e63946; /* rojo fuerte */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  
+}
+
+.boton-eliminar:hover {
+  background-color: #d62828; /* un rojo más oscuro */
+  box-shadow: 0 0 8px rgba(230, 57, 70, 0.6);
+}
+.boton-agregar,
+.boton-eliminar {
+  margin-left: 6px;
+  padding: 2px 8px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.boton-agregar {
+  background-color: #38b000;
+  color: white;
+}
+
+.boton-agregar:hover {
+  background-color: #2d6a4f;
+}
+
+.boton-eliminar {
+  background-color: #e63946;
+  color: white;
+}
+
+.boton-eliminar:hover {
+  background-color: #ba1b1d;
+}
+.boton-agregar,
+.boton-eliminar {
+  background-color: #e63946;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.boton-agregar {
+  background-color: #38b000;
+}
+
+.boton-agregar:hover {
+  background-color: #2d6a4f;
+}
+
+.boton-eliminar:hover {
+  background-color: #ba1b1d;
+}
+.boton-agregar,
+.boton-eliminar {
+  background-color: #e63946;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.boton-agregar {
+  background-color: #38b000;
+}
+
+.boton-agregar:hover {
+  background-color: #2d6a4f;
+}
+
+.boton-eliminar:hover {
+  background-color: #ba1b1d;
+}

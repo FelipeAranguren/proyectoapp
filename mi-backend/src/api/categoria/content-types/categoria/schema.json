@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "categorias",
+  "info": {
+    "singularName": "categoria",
+    "pluralName": "categorias",
+    "displayName": "Categoría"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "orden": {
+      "type": "integer"
+    },
+    "restaurante": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::restaurante.restaurante"
+    }
+  }
+}

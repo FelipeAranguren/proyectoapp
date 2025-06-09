@@ -1,0 +1,21 @@
+# General
+.DS_Store
+.env
+.env.*.local
+*.log
+node_modules
+build
+.cache
+.tmp
+dist
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Editor configs
+.idea
+.vscode
+*.swp
+
+# Others
+*.sqlite*
+*.pid

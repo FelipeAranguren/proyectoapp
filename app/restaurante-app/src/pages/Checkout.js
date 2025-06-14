@@ -1,4 +1,4 @@
-// Checkout.js
+// src/pages/Checkout.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,19 +30,13 @@ const Checkout = () => {
       localStorage.setItem('carrito', JSON.stringify(carritoLimpio));
     }
 
-    // Obtener restauranteId y mesa del localStorage
     const restauranteIdGuardado = localStorage.getItem('restauranteId');
     const mesaGuardada = localStorage.getItem('mesa');
-    
-    if (restauranteIdGuardado) {
-      setRestauranteId(restauranteIdGuardado);
-    }
-    if (mesaGuardada) {
-      setMesa(mesaGuardada);
-    }
+    if (restauranteIdGuardado) setRestauranteId(restauranteIdGuardado);
+    if (mesaGuardada) setMesa(mesaGuardada);
   }, []);
 
-  const total = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+  const total = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
 
   const actualizarCarrito = (nuevoCarrito) => {
     const carritoUnificado = unificarCarrito(nuevoCarrito);
@@ -79,7 +73,7 @@ const Checkout = () => {
     if (restauranteId) {
       navigate(`/menu/${restauranteId}${mesa ? `?mesa=${mesa}` : ''}`);
     } else {
-      navigate('/'); // Fallback si no hay restauranteId
+      navigate('/');
     }
   };
 
@@ -100,23 +94,11 @@ const Checkout = () => {
                   marginBottom: '8px'
                 }}
               >
-                <span>
-                  {item.nombre} – ${item.precio}
-                </span>
+                <span>{item.nombre} – ${item.precio}</span>
                 <div>
-                  <button
-                    onClick={() => quitarDelCarrito(item.id)}
-                    className="boton-eliminar"
-                  >
-                    −
-                  </button>
+                  <button onClick={() => quitarDelCarrito(item.id)} className="boton-eliminar">−</button>
                   <span style={{ margin: '0 10px' }}>{item.cantidad}</span>
-                  <button
-                    onClick={() => agregarAlCarrito(item)}
-                    className="boton-agregar"
-                  >
-                    +
-                  </button>
+                  <button onClick={() => agregarAlCarrito(item)} className="boton-agregar">+</button>
                 </div>
               </li>
             ))}
@@ -125,21 +107,7 @@ const Checkout = () => {
           <p><strong>Total: ${total.toFixed(2)}</strong></p>
 
           <div className="checkout-buttons">
-            <button 
-              className="volver-menu" 
-              onClick={volverAlMenu}
-              style={{
-                backgroundColor: 'orange',
-                color: 'white',
-                padding: '10px 15px',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                marginRight: '10px'
-              }}
-            >
-              Volver al Menú
-            </button>
+            <button className="volver-menu" onClick={volverAlMenu}>Volver al Menú</button>
             <button className="vaciar" onClick={vaciarCarrito}>Vaciar carrito</button>
             <button className="confirmar" onClick={confirmarPedido}>Confirmar pedido</button>
           </div>
@@ -147,20 +115,7 @@ const Checkout = () => {
       ) : (
         <>
           <p>No hay productos en tu pedido.</p>
-          <button 
-            className="volver-menu" 
-            onClick={volverAlMenu}
-            style={{
-              backgroundColor: 'orange',
-              color: 'white',
-              padding: '10px 15px',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}
-          >
-            Volver al Menú
-          </button>
+          <button className="volver-menu" onClick={volverAlMenu}>Volver al Menú</button>
         </>
       )}
     </div>

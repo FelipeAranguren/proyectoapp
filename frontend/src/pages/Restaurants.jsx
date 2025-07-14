@@ -27,8 +27,10 @@ export default function Restaurants() {
       </Typography>
       <Grid container spacing={3}>
         {restos.map(r => {
-          const logoUrl = r.attributes.logo
-            ? base + (r.attributes.logo.formats?.thumbnail?.url || r.attributes.logo.url)
+          const { name, slug, logo } = r.attributes
+
+          const logoUrl = logo
+            ? base + (logo.formats?.thumbnail?.url || logo.url)
             : PLACEHOLDER
 
           return (
@@ -38,19 +40,20 @@ export default function Restaurants() {
                   component="img"
                   height="140"
                   image={logoUrl}
-                  alt={r.attributes.name}
+                  alt={name}
                 />
                 <CardContent>
                   <Typography variant="h6">
-                    {r.attributes.name}
+                    {name}
                   </Typography>
                 </CardContent>
                 <CardActions>
                   <Button
                     component={Link}
-                    to={`/restaurantes/${r.attributes.slug}`}
+                    to={slug ? `/restaurantes/${slug}` : '#'}
                     fullWidth
                     variant="contained"
+                    disabled={!slug}
                   >
                     Ver Menú
                   </Button>

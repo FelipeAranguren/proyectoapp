@@ -1,4 +1,3 @@
-// src/pages/RestaurantMenu.jsx
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
@@ -9,7 +8,6 @@ import {
   Card,
   CardMedia,
   CardContent,
-  CardActions,
   Button,
   CircularProgress
 } from '@mui/material'
@@ -17,62 +15,55 @@ import { useCart } from '../context/CartContext'
 import { api } from '../api'
 import StickyFooter from '../components/StickyFooter'
 
-// Imagen fallback si no hay
 const PLACEHOLDER = 'https://via.placeholder.com/600x400?text=No+Image'
 
 export default function RestaurantMenu() {
   const { slug } = useParams()
-  const [categories, setCategories] = useState(null)  // null = cargando
+  const [productos, setProductos] = useState(null)
   const { addItem } = useCart()
 
   useEffect(() => {
-    async function fetchRestaurant() {
+    async function fetchProductosDelRestaurante() {
       try {
         const res = await api.get(
-          `/restaurantes?filters[slug][$eq]=${slug}&populate=categorias.productos.image`
+          `/restaurantes?filters[slug][$eq]=${slug}&populate[productos][populate][image]=true`
         )
-        console.log('Restaurant raw:', res.data)
+        const restaurante = res.data.data[0]
 
-        const r = res.data.data[0]
-        if (!r) {
-          setCategories([])
+        if (!restaurante) {
+          setProductos([])
           return
         }
 
         const base = import.meta.env.VITE_API_URL.replace('/api', '')
-        const cats = (r.categorias || []).map(cat => ({
-          id: cat.id,
-          nombre: cat.name,
-          productos: (cat.productos || []).map(p => {
-            // Strapi devuelve p.image como objeto plano:
-            const fm = p.image?.formats
-            const urlRel =
-              fm?.small?.url ||
-              fm?.thumbnail?.url ||
-              p.image?.url ||
-              null
-            const imagen = urlRel ? base + urlRel : PLACEHOLDER
+        const productosProcesados = (restaurante.productos || []).map(p => {
+          const fm = p.image?.formats
+          const urlRel =
+            fm?.small?.url ||
+            fm?.thumbnail?.url ||
+            p.image?.url ||
+            null
+          const imagen = urlRel ? base + urlRel : PLACEHOLDER
 
-            return {
-              id: p.id,
-              nombre: p.name,
-              precio: p.price,
-              imagen
-            }
-          })
-        }))
+          return {
+            id: p.id,
+            nombre: p.name,
+            precio: p.price,
+            imagen
+          }
+        })
 
-        setCategories(cats)
+        setProductos(productosProcesados)
       } catch (err) {
-        console.error('Error cargando restaurante:', err)
-        setCategories([])  // evita bloqueos
+        console.error('Error cargando productos del restaurante:', err)
+        setProductos([])
       }
     }
-    fetchRestaurant()
+
+    fetchProductosDelRestaurante()
   }, [slug])
 
-  // loading
-  if (categories === null) {
+  if (productos === null) {
     return (
       <Container sx={{ textAlign: 'center', mt: 8 }}>
         <CircularProgress />
@@ -80,66 +71,87 @@ export default function RestaurantMenu() {
     )
   }
 
-  // no encontrado o sin categorías
-  if (categories.length === 0) {
+  if (productos.length === 0) {
     return (
       <Container sx={{ textAlign: 'center', mt: 8 }}>
         <Typography variant="h6">
-          No se encontró el restaurante o no tiene menú.
+          No se encontró el restaurante o no tiene productos disponibles.
         </Typography>
       </Container>
     )
   }
 
-  // render del menú
   return (
-    <Container sx={{ py: 4 }}>
+    <Container sx={{ py: 7 }}>
       <Typography variant="h4" gutterBottom>
         Menú del Restaurante
       </Typography>
 
-      {categories.map(cat => (
-        <Box key={cat.id} mb={6}>
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            {cat.nombre}
-          </Typography>
-          <Grid container spacing={3}>
-            {cat.productos.map(plato => (
-              <Grid key={plato.id} item xs={12} sm={6} md={4} lg={3}>
-                <Card sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Box sx={{ width: '100%', aspectRatio: '4 / 3', overflow: 'hidden' }}>
-                    <CardMedia
-                      component="img"
-                      image={plato.imagen}
-                      alt={plato.nombre}
-                      sx={{ objectFit: 'cover', objectPosition: 'center' }}
-                    />
-                  </Box>
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h6">{plato.nombre}</Typography>
-                    <Typography>${plato.precio}</Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      onClick={() =>
-                        addItem({
-                          id: plato.id,
-                          nombre: plato.nombre,
-                          precio: plato.precio
-                        })
-                      }
-                    >
-                      Agregar
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
+      <Grid container spacing={3}>
+        {productos.map(plato => (
+          <Grid key={plato.id} item xs={12} sm={6} md={4} lg={3}>
+            <Card
+              sx={{
+                flexGrow: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                py: 0.8,
+                px: 2
+              }}
+            >
+              <Box sx={{ width: '100%', aspectRatio: '4 / 3', overflow: 'hidden', borderRadius: 1 }}>
+                <CardMedia
+                  component="img"
+                  image={plato.imagen}
+                  alt={plato.nombre}
+                  sx={{ objectFit: 'cover', objectPosition: 'center' }}
+                />
+              </Box>
+
+              <CardContent sx={{ px: 0, py: 1, flexGrow: 1 }}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: '1rem',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    minHeight: '3rem'
+                  }}
+                >
+                  {plato.nombre}
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  sx={{ mt: -2, mb: 1 }}
+                >
+                  ${plato.precio}
+                </Typography>
+
+                <Button
+                  fullWidth
+                  size="small"
+                  variant="contained"
+                  onClick={() =>
+                    addItem({
+                      id: plato.id,
+                      nombre: plato.nombre,
+                      precio: plato.precio
+                    })
+                  }
+                >
+                  Agregar
+                </Button>
+              </CardContent>
+            </Card>
           </Grid>
-        </Box>
-      ))}
+        ))}
+      </Grid>
 
       <StickyFooter />
     </Container>

@@ -521,6 +521,10 @@ export interface ApiProductoProducto extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String & Schema.Attribute.Required;
     price: Schema.Attribute.Decimal & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    restaurante: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::restaurante.restaurante'
+    >;
     sku: Schema.Attribute.String;
     slug: Schema.Attribute.UID;
     updatedAt: Schema.Attribute.DateTime;
@@ -557,6 +561,7 @@ export interface ApiRestauranteRestaurante extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String & Schema.Attribute.Required;
     pedidos: Schema.Attribute.Relation<'oneToMany', 'api::pedido.pedido'>;
     primaryColoraccentColor: Schema.Attribute.String;
+    productos: Schema.Attribute.Relation<'oneToMany', 'api::producto.producto'>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'>;
     tipografia: Schema.Attribute.String;

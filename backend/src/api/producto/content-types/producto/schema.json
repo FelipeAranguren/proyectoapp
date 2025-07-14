@@ -19,6 +19,12 @@
       "type": "decimal",
       "required": true
     },
+    "restaurante": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::restaurante.restaurante",
+      "inversedBy": "productos"
+    },
     "description": {
       "type": "blocks"
     },

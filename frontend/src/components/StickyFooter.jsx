@@ -1,17 +1,9 @@
 // src/components/StickyFooter.jsx
 import React, { useState } from 'react';
 import {
-  Paper,
-  Typography,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  List,
-  ListItem,
-  ListItemText
+  Paper, Typography, Button, Dialog, DialogTitle,
+  DialogContent, DialogActions, TextField,
+  List, ListItem, ListItemText
 } from '@mui/material';
 import { useCart } from '../context/CartContext';
 import { api } from '../api';
@@ -22,41 +14,51 @@ export default function StickyFooter() {
   const [table, setTable] = useState('');
   const [notes, setNotes] = useState('');
 
-  // No mostramos nada si el carrito está vacío
   if (items.length === 0) return null;
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleConfirm = async () => {
-    // Construimos el payload según tu schema de Strapi
-    const payload = {
-      data: {
-        table: Number(table),
-        order_status: 'nuevo',
-        customerNotes: notes,
-        total: subtotal,
-        items: items.map(item => ({
-          producto: item.id,
-          cantidad: item.qty,
-          notas: item.notes || '',
-          unitPrice: item.precio,
-          totalPrice: item.qty * item.precio,
-        })),
-      }
-    };
-
     try {
-      const res = await api.post('/pedidos', payload);
-      console.log('Pedido enviado:', res.data);
-      clearCart();        // Vaciamos el carrito
-      setTable('');       // Reseteamos formulario
+      // 1. Crear el pedido base
+      const pedidoRes = await api.post('/pedidos', {
+        data: {
+          table: Number(table),
+          order_status: 'pending', // debe coincidir con tus opciones enum
+          customerNotes: notes,
+          total: subtotal,
+        }
+      });
+
+      const pedidoId = pedidoRes.data.data.id;
+      
+
+      // 2. Crear ítems asociados al pedido
+      await Promise.all(items.map(item =>
+        api.post('/item-pedidos', {
+          data: {
+            product: {
+  connect: [item.id]
+},
+            quantity: item.qty,
+            notes: item.notes || '',
+            UnitPrice: item.precio,
+            totalPrice: item.qty * item.precio,
+            order: {
+  connect: [pedidoId]
+} // <--- CORRECTO formato
+          }
+        })
+      ));
+
+      clearCart();
+      setTable('');
       setNotes('');
-      setOpen(false);     // Cerramos el diálogo
-      // Aquí podrías disparar un Snackbar de éxito
+      setOpen(false);
+      console.log('Pedido e ítems creados correctamente');
     } catch (err) {
-      console.error('Error al enviar pedido:', err);
-      // Y aquí un Snackbar de error
+      console.error('Error al enviar pedido:', err.response?.data || err.message);
     }
   };
 
@@ -87,7 +89,6 @@ export default function StickyFooter() {
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>Confirmar pedido</DialogTitle>
         <DialogContent dividers>
-          {/* Número de mesa */}
           <TextField
             label="Número de mesa"
             type="number"
@@ -96,8 +97,6 @@ export default function StickyFooter() {
             fullWidth
             margin="normal"
           />
-
-          {/* Notas generales */}
           <TextField
             label="Notas generales"
             value={notes}
@@ -107,8 +106,6 @@ export default function StickyFooter() {
             rows={3}
             margin="normal"
           />
-
-          {/* Listado de ítems */}
           <List>
             {items.map(item => (
               <ListItem key={item.id}>
@@ -119,12 +116,10 @@ export default function StickyFooter() {
               </ListItem>
             ))}
           </List>
-
           <Typography variant="subtitle1" sx={{ mt: 2 }}>
             Subtotal: <strong>${subtotal}</strong>
           </Typography>
         </DialogContent>
-
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button

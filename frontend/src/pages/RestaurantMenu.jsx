@@ -1,3 +1,5 @@
+// src/pages/RestaurantMenu.jsx
+
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
@@ -20,7 +22,8 @@ const PLACEHOLDER = 'https://via.placeholder.com/600x400?text=No+Image'
 export default function RestaurantMenu() {
   const { slug } = useParams()
   const [productos, setProductos] = useState(null)
-  const { addItem } = useCart()
+  const [nombreRestaurante, setNombreRestaurante] = useState('')
+  const { addItem, removeItem } = useCart()
 
   useEffect(() => {
     async function fetchProductosDelRestaurante() {
@@ -34,6 +37,8 @@ export default function RestaurantMenu() {
           setProductos([])
           return
         }
+
+        setNombreRestaurante(restaurante.name || '')
 
         const base = import.meta.env.VITE_API_URL.replace('/api', '')
         const productosProcesados = (restaurante.productos || []).map(p => {
@@ -84,7 +89,7 @@ export default function RestaurantMenu() {
   return (
     <Container sx={{ py: 7 }}>
       <Typography variant="h4" gutterBottom>
-        Menú del Restaurante
+        Menú de {nombreRestaurante}
       </Typography>
 
       <Grid container spacing={3}>
@@ -133,20 +138,31 @@ export default function RestaurantMenu() {
                   ${plato.precio}
                 </Typography>
 
-                <Button
-                  fullWidth
-                  size="small"
-                  variant="contained"
-                  onClick={() =>
-                    addItem({
-                      id: plato.id,
-                      nombre: plato.nombre,
-                      precio: plato.precio
-                    })
-                  }
-                >
-                  Agregar
-                </Button>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    onClick={() =>
+                      addItem({
+                        id: plato.id,
+                        nombre: plato.nombre,
+                        precio: plato.precio
+                      })
+                    }
+                    fullWidth
+                  >
+                    Agregar
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="error"
+                    onClick={() => removeItem(plato.id)}
+                    fullWidth
+                  >
+                    Quitar
+                  </Button>
+                </Box>
               </CardContent>
             </Card>
           </Grid>

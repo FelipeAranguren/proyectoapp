@@ -1,9 +1,14 @@
-// src/pages/Restaurants.jsx
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Container, Typography, Grid,
-  Card, CardMedia, CardContent, CardActions, Button
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Box
 } from '@mui/material'
 import { api } from '../api'
 
@@ -25,6 +30,7 @@ export default function Restaurants() {
       <Typography variant="h4" gutterBottom>
         Nuestros Restaurantes
       </Typography>
+
       <Grid container spacing={3}>
         {restos.map(r => {
           const { name, slug, logo } = r.attributes
@@ -35,18 +41,26 @@ export default function Restaurants() {
 
           return (
             <Grid key={r.id} item xs={12} sm={6} md={4} lg={3}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={logoUrl}
-                  alt={name}
-                />
+              <Card sx={{ overflow: 'hidden', borderRadius: 2 }}>
+                <Box sx={{ height: 140 }}>
+                  <img
+                    src={logoUrl}
+                    alt={name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderTopLeftRadius: '16px',
+                      borderTopRightRadius: '16px',
+                      display: 'block'
+                    }}
+                  />
+                </Box>
+
                 <CardContent>
-                  <Typography variant="h6">
-                    {name}
-                  </Typography>
+                  <Typography variant="h6">{name}</Typography>
                 </CardContent>
+
                 <CardActions>
                   <Button
                     component={Link}

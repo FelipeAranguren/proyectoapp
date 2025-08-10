@@ -1,82 +1,156 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+// src/pages/Restaurants.jsx
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
-  Grid,
   Card,
-  CardContent,
-  CardActions,
   Button,
-  Box
-} from '@mui/material'
-import { api } from '../api'
-
-const PLACEHOLDER = 'https://via.placeholder.com/300x200?text=No+Logo'
+  CircularProgress,
+  Box,
+} from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { api } from '../api';
 
 export default function Restaurants() {
-  const [restos, setRestos] = useState([])
+  const [rests, setRests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/restaurantes?populate=logo').then(res => {
-      setRestos(res.data.data)
-    })
-  }, [])
+    async function fetchRests() {
+      try {
+        const res = await api.get('/restaurantes?populate=logo');
+        const base = import.meta.env.VITE_API_URL.replace('/api', '');
 
-  const base = import.meta.env.VITE_API_URL.replace('/api', '')
+        const list = res.data.data.map((r) => {
+          const attr = r.attributes || {};
+          const logo = attr.logo?.data?.attributes;
+
+          const urlRel =
+            r.logo?.formats?.small?.url ||
+            r.logo?.formats?.thumbnail?.url ||
+            r.logo?.url ||
+            null;
+
+          return {
+            id: r.id,
+            name: r.name,
+            slug: r.slug || String(r.id),
+            tipo: r.categoria || 'Comida',
+            rating: r.rating || '4.5',
+            deliveryTime: r.deliveryTime || '20-30 min',
+            logo: urlRel ? base + urlRel : null,
+          };
+        });
+
+        setRests(list);
+      } catch (err) {
+        console.error('Error cargando restaurantes:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRests();
+  }, []);
+
+  if (loading) {
+    return (
+      <Container sx={{ textAlign: 'center', mt: 8 }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
 
   return (
-    <Container sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Nuestros Restaurantes
+    <Container maxWidth="sm" sx={{ py: 4 }}>
+      <Typography variant="h4" align="center" gutterBottom>
+        ¿Qué te apetece hoy?
+      </Typography>
+      <Typography variant="subtitle1" align="center" color="text.secondary" sx={{ mb: 4 }}>
+        Selecciona un restaurante para ver su menú
       </Typography>
 
-      <Grid container spacing={3}>
-        {restos.map(r => {
-          const { name, slug, logo } = r.attributes
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {rests.map((restaurant) => (
+          <Card
+            key={restaurant.id}
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              boxShadow: 2,
+              transition: 'box-shadow 0.3s',
+              '&:hover': {
+                boxShadow: 6,
+              },
+            }}
+          >
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <img
+                src={restaurant.logo}
+                alt={restaurant.name}
+                style={{ width: 80, height: 80, borderRadius: 12, objectFit: 'cover' }}
+              />
 
-          const logoUrl = logo
-            ? base + (logo.formats?.thumbnail?.url || logo.url)
-            : PLACEHOLDER
-
-          return (
-            <Grid key={r.id} item xs={12} sm={6} md={4} lg={3}>
-              <Card sx={{ overflow: 'hidden', borderRadius: 2 }}>
-                <Box sx={{ height: 140 }}>
-                  <img
-                    src={logoUrl}
-                    alt={name}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      borderTopLeftRadius: '16px',
-                      borderTopRightRadius: '16px',
-                      display: 'block'
+              <Box sx={{ flex: 1, position: 'relative' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {restaurant.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {restaurant.tipo}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      backgroundColor: 'success.light',
+                      px: 1,
+                      borderRadius: 1,
+                      height: 24,
                     }}
-                  />
+                  >
+                    <StarIcon fontSize="small" sx={{ color: 'success.main' }} />
+                    <Typography variant="caption" sx={{ color: 'success.dark' }}>
+                      {restaurant.rating}
+                    </Typography>
+                  </Box>
                 </Box>
 
-                <CardContent>
-                  <Typography variant="h6">{name}</Typography>
-                </CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <AccessTimeIcon fontSize="small" color="action" />
+                  <Typography variant="body2" color="text.secondary">
+                    {restaurant.deliveryTime}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
 
-                <CardActions>
-                  <Button
-                    component={Link}
-                    to={slug ? `/restaurantes/${slug}` : '#'}
-                    fullWidth
-                    variant="contained"
-                    disabled={!slug}
-                  >
-                    Ver Menú
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          )
-        })}
-      </Grid>
+            {/* Botón debajo del bloque */}
+            <Box mt={2}>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={() => navigate(`/restaurantes/${restaurant.slug}`)}
+              >
+                Ver menú
+              </Button>
+            </Box>
+          </Card>
+        ))}
+      </Box>
+
+      <Box sx={{ textAlign: 'center', mt: 6 }}>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          ¿No encuentras tu restaurante favorito?
+        </Typography>
+        <Button variant="outlined">Sugerir restaurante</Button>
+      </Box>
     </Container>
-  )
+  );
 }
